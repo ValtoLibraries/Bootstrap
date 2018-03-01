@@ -90,12 +90,12 @@ Disabled buttons using the `<a>` element behave a bit different:
 - Disabled buttons should include the `aria-disabled="true"` attribute to indicate the state of the element to assistive technologies.
 
 {% example html %}
-<a href="#" class="btn btn-primary btn-lg disabled" role="button" aria-disabled="true">Primary link</a>
-<a href="#" class="btn btn-secondary btn-lg disabled" role="button" aria-disabled="true">Link</a>
+<a href="#" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true">Primary link</a>
+<a href="#" class="btn btn-secondary btn-lg disabled" tabindex="-1" role="button" aria-disabled="true">Link</a>
 {% endexample %}
 
 {% callout warning %}
-#### Link functionality caveat
+##### Link functionality caveat
 
 The `.disabled` class uses `pointer-events: none` to try to disable the link functionality of `<a>`s, but that CSS property is not yet standardized. In addition, even in browsers that do support `pointer-events: none`, keyboard navigation remains unaffected, meaning that sighted keyboard users and users of assistive technologies will still be able to activate these links. So to be safe, add a `tabindex="-1"` attribute on these links (to prevent them from receiving keyboard focus) and use custom JavaScript to disable their functionality.
 {% endcallout %}
@@ -116,22 +116,16 @@ Add `data-toggle="button"` to toggle a button's `active` state. If you're pre-to
 
 ### Checkbox and radio buttons
 
-Bootstrap's `.button` styles can be applied to other elements, such as `<label>`s, to provide checkbox or radio style button toggling. Add `data-toggle="buttons"` to a `.btn-group` containing those modified buttons to enable their toggling behavior via JavaScript and add `.btn-group-toggle` to style the `<input>`s within your buttons.
+Bootstrap's `.button` styles can be applied to other elements, such as `<label>`s, to provide checkbox or radio style button toggling. Add `data-toggle="buttons"` to a `.btn-group` containing those modified buttons to enable their toggling behavior via JavaScript and add `.btn-group-toggle` to style the `<input>`s within your buttons. **Note that you can create single input-powered buttons or groups of them.**
 
 The checked state for these buttons is **only updated via `click` event** on the button. If you use another method to update the input—e.g., with `<input type="reset">` or by manually applying the input's `checked` property—you'll need to toggle `.active` on the `<label>` manually.
 
 Note that pre-checked buttons require you to manually add the `.active` class to the input's `<label>`.
 
 {% example html %}
-<div class="btn-group btn-group-toggle" data-toggle="buttons">
+<div class="btn-group-toggle" data-toggle="buttons">
   <label class="btn btn-secondary active">
-    <input type="checkbox" checked autocomplete="off"> Active
-  </label>
-  <label class="btn btn-secondary">
-    <input type="checkbox" autocomplete="off"> Check
-  </label>
-  <label class="btn btn-secondary">
-    <input type="checkbox" autocomplete="off"> Check
+    <input type="checkbox" checked autocomplete="off"> Checked
   </label>
 </div>
 {% endexample %}

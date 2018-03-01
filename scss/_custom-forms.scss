@@ -117,6 +117,15 @@
       background-image: $custom-checkbox-indicator-icon-indeterminate;
     }
   }
+
+  .custom-control-input:disabled {
+    &:checked ~ .custom-control-label::before {
+      background-color: $custom-control-indicator-checked-disabled-bg;
+    }
+    &:indeterminate ~ .custom-control-label::before {
+      background-color: $custom-control-indicator-checked-disabled-bg;
+    }
+  }
 }
 
 // Radios
@@ -136,6 +145,12 @@
       background-image: $custom-radio-indicator-icon-checked;
     }
   }
+
+  .custom-control-input:disabled {
+    &:checked ~ .custom-control-label::before {
+      background-color: $custom-control-indicator-checked-disabled-bg;
+    }
+  }
 }
 
 
@@ -148,7 +163,7 @@
 .custom-select {
   display: inline-block;
   width: 100%;
-  height: $input-height;
+  height: $custom-select-height;
   padding: $custom-select-padding-y ($custom-select-padding-x + $custom-select-indicator-padding) $custom-select-padding-y $custom-select-padding-x;
   line-height: $custom-select-line-height;
   color: $custom-select-color;
@@ -225,7 +240,9 @@
 }
 
 .custom-file-input {
-  max-width: 100%;
+  position: relative;
+  z-index: 2;
+  width: 100%;
   height: $custom-file-height;
   margin: 0;
   opacity: 0;
@@ -238,49 +255,166 @@
       border-color: $custom-file-focus-border-color;
     }
   }
+
+  @each $lang, $value in $custom-file-text {
+    &:lang(#{$lang}) ~ .custom-file-label::after {
+      content: $value;
+    }
+  }
 }
 
-.custom-file-control {
+.custom-file-label {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
+  z-index: 1;
   height: $custom-file-height;
   padding: $custom-file-padding-y $custom-file-padding-x;
   line-height: $custom-file-line-height;
   color: $custom-file-color;
-  pointer-events: none;
-  user-select: none;
   background-color: $custom-file-bg;
   border: $custom-file-border-width solid $custom-file-border-color;
   @include border-radius($custom-file-border-radius);
   @include box-shadow($custom-file-box-shadow);
 
-  @each $lang, $text in map-get($custom-file-text, placeholder) {
-    &:lang(#{$lang}):empty::after {
-      content: $text;
-    }
-  }
-
-  &::before {
+  &::after {
     position: absolute;
-    top: -$custom-file-border-width;
-    right: -$custom-file-border-width;
-    bottom: -$custom-file-border-width;
-    z-index: 1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
     display: block;
-    height: $custom-file-height;
+    height: calc(#{$custom-file-height} - #{$custom-file-border-width} * 2);
     padding: $custom-file-padding-y $custom-file-padding-x;
     line-height: $custom-file-line-height;
     color: $custom-file-button-color;
+    content: "Browse";
     @include gradient-bg($custom-file-button-bg);
-    border: $custom-file-border-width solid $custom-file-border-color;
+    border-left: $custom-file-border-width solid $custom-file-border-color;
     @include border-radius(0 $custom-file-border-radius $custom-file-border-radius 0);
   }
+}
 
-  @each $lang, $text in map-get($custom-file-text, button-label) {
-    &:lang(#{$lang})::before {
-      content: $text;
+// Range
+//
+// Style range inputs the same across browsers. Vendor-specific rules for psuedo
+// elements cannot be mixed. As such, there are no shared styles for focus or
+// active states on prefixed selectors.
+
+.custom-range {
+  width: 100%;
+  padding-left: 0; // Firefox specific
+  background-color: transparent;
+  appearance: none;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-moz-focus-outer {
+    border: 0;
+  }
+
+  &::-webkit-slider-thumb {
+    width: $custom-range-thumb-width;
+    height: $custom-range-thumb-height;
+    margin-top: -($custom-range-thumb-width * .25); // Webkit specific?
+    @include gradient-bg($custom-range-thumb-bg);
+    border: $custom-range-thumb-border;
+    @include border-radius($custom-range-thumb-border-radius);
+    @include box-shadow($custom-range-thumb-box-shadow);
+    appearance: none;
+
+    &:focus {
+      outline: none;
+      box-shadow: $custom-range-thumb-focus-box-shadow; // No mixin for focus accessibility
     }
+
+    &:active {
+      @include gradient-bg($custom-range-thumb-active-bg);
+    }
+  }
+
+  &::-webkit-slider-runnable-track {
+    width: $custom-range-track-width;
+    height: $custom-range-track-height;
+    color: transparent; // Why?
+    cursor: $custom-range-track-cursor;
+    background-color: $custom-range-track-bg;
+    border-color: transparent;
+    @include border-radius($custom-range-track-border-radius);
+    @include box-shadow($custom-range-track-box-shadow);
+  }
+
+  &::-moz-range-thumb {
+    width: $custom-range-thumb-width;
+    height: $custom-range-thumb-height;
+    @include gradient-bg($custom-range-thumb-bg);
+    border: $custom-range-thumb-border;
+    @include border-radius($custom-range-thumb-border-radius);
+    @include box-shadow($custom-range-thumb-box-shadow);
+    appearance: none;
+
+    &:focus {
+      outline: none;
+      box-shadow: $custom-range-thumb-focus-box-shadow; // No mixin for focus accessibility
+    }
+
+    &:active {
+      @include gradient-bg($custom-range-thumb-active-bg);
+    }
+  }
+
+  &::-moz-range-track {
+    width: $custom-range-track-width;
+    height: $custom-range-track-height;
+    color: transparent;
+    cursor: $custom-range-track-cursor;
+    background-color: $custom-range-track-bg;
+    border-color: transparent; // Firefox specific?
+    @include border-radius($custom-range-track-border-radius);
+    @include box-shadow($custom-range-track-box-shadow);
+  }
+
+  &::-ms-thumb {
+    width: $custom-range-thumb-width;
+    height: $custom-range-thumb-height;
+    @include gradient-bg($custom-range-thumb-bg);
+    border: $custom-range-thumb-border;
+    @include border-radius($custom-range-thumb-border-radius);
+    @include box-shadow($custom-range-thumb-box-shadow);
+    appearance: none;
+
+    &:focus {
+      outline: none;
+      box-shadow: $custom-range-thumb-focus-box-shadow; // No mixin for focus accessibility
+    }
+
+    &:active {
+      @include gradient-bg($custom-range-thumb-active-bg);
+    }
+  }
+
+  &::-ms-track {
+    width: $custom-range-track-width;
+    height: $custom-range-track-height;
+    color: transparent;
+    cursor: $custom-range-track-cursor;
+    background-color: transparent;
+    border-color: transparent;
+    border-width: ($custom-range-thumb-height * .5);
+    @include box-shadow($custom-range-track-box-shadow);
+  }
+
+  &::-ms-fill-lower {
+    background-color: $custom-range-track-bg;
+    @include border-radius($custom-range-track-border-radius);
+  }
+
+  &::-ms-fill-upper {
+    margin-right: 15px; // arbitrary?
+    background-color: $custom-range-track-bg;
+    @include border-radius($custom-range-track-border-radius);
   }
 }
